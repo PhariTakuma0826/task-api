@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Task App</title>
+</head>
+<body>
+<h1>Task App</h1>
+
+<form method="post" action="/tasks">
+    <input name="title" placeholder="やること" />
+    <button type="submit">追加</button>
+</form>
+
+<ul>
+    <li th:each="t : ${tasks}">
+        <span th:text="${t.title}"></span>
+        <span th:text="${t.completed}"></span>
+
+        <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post" style="display:inline;">
+            <button type="submit">削除</button>
+        </form>
+    </li>
+</ul>
+
+</body>
+</html>
