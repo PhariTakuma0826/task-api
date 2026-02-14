@@ -1,13 +1,21 @@
 package com.example.SpringBootPractice.task;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Task {
 
-    private final long id;
-    private final String title;
-    private final boolean completed;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private boolean completed;
 
-    public Task(long id, String title, boolean completed) {
-        this.id = id;
+    protected Task() {
+        // JPA用
+    }
+
+    public Task(String title) {
         this.title = title;
         this.completed = completed;
     }
@@ -22,5 +30,14 @@ public class Task {
 
     public boolean isCompleted() {
         return completed;
+    }
+
+    public void update(String title, Boolean completed) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (completed != null) {
+            this.completed = completed;
+        }
     }
 }
