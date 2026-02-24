@@ -32,4 +32,16 @@ public class TaskPageController {
         taskService.delete(id);
         return "redirect:/";
     }
+
+    @PostMapping("/tasks/{id}/toggle")
+    public String toggle(@PathVariable Long id) {
+        taskService.toggleCompleted(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/tasks/{id}/edit")
+    public String editTitle(@PathVariable long id, @RequestParam String title) {
+        taskService.updateTitle(id, title);
+        return "redirect:/";
+    }
 }

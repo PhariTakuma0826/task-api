@@ -14,12 +14,29 @@
 
 <ul>
     <li th:each="t : ${tasks}">
-        <span th:text="${t.title}"></span>
-        <span th:text="${t.completed}"></span>
 
-        <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post" style="display:inline;">
+        <!-- タイトル -->
+        <span th:text="${t.title}"
+              th:style="${t.completed} ? 'text-decoration: line-through;' : ''">
+        </span>
+
+        <!-- 完了切り替え -->
+        <form th:action="@{/tasks/{id}/toggle(id=${t.id})}" method="post">
+            <button type="submit"
+                    th:text="${t.completed} ? '未完了に戻す' : '完了にする'">
+            </button>
+        </form>
+
+        <!-- 削除 -->
+        <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post">
             <button type="submit">削除</button>
         </form>
+
+        <form th:action="@{/tasks/{id}/edit(id=${t.id})}" method="post" style="display:inline;">
+            <input name="title" th:value="${t.title}" />
+            <button type="submit">変更</button>
+        </form>
+
     </li>
 </ul>
 

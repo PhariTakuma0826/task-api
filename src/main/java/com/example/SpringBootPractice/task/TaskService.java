@@ -32,4 +32,20 @@ public class TaskService {
     public void delete(long id) {
         repo.deleteById(id);
     }
+
+    public Task toggleCompleted(Long id) {
+        Task t = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found: " + id));
+
+        t.update(null, !t.isCompleted()); // 反転
+        return repo.save(t);
+    }
+
+    public Task updateTitle(long id, String title) {
+        Task t = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found: " + id));
+
+        t.updateTitle(title);   // ← 次でTaskに作る
+        return repo.save(t);    // 確実にDB反映（今はこれでOK）
+    }
 }

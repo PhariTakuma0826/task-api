@@ -1,8 +1,10 @@
 package com.example.SpringBootPractice.task;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "task")
 public class Task {
 
     @Id
@@ -10,9 +12,22 @@ public class Task {
     private Long id;
     private String title;
     private boolean completed;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     protected Task() {
         // JPA用
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Task(String title) {
@@ -39,5 +54,9 @@ public class Task {
         if (completed != null) {
             this.completed = completed;
         }
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }
