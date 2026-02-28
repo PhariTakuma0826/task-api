@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Task</title></head>
+<body>
+<h2>Task Detail</h2>
+<p>ID: <span th:text="${task.id}"></span></p>
+<p>Title: <span th:text="${task.title}"></span></p>
+<p>Completed: <span th:text="${task.completed}"></span></p>
+<a href="/">戻る</a>
+</body>
+</html>

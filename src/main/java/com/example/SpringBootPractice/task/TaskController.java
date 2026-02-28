@@ -21,7 +21,7 @@ public class TaskController {
 
     @PostMapping
     public Task createTask(@RequestBody CreateTaskRequest request) {
-        return taskService.create(request.getTitle());
+        return taskService.create(request.getTitle(), request.getPriority());
     }
 
     @PutMapping("/{id}")
