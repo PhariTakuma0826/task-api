@@ -3,91 +3,268 @@
 <head>
     <meta charset="utf-8" />
     <title>Task App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        :root{
+          --bg:#f6f7fb;
+          --card:#ffffff;
+          --text:#111827;
+          --muted:#6b7280;
+          --border:#e5e7eb;
+          --shadow:0 10px 25px rgba(0,0,0,.06);
+          --radius:14px;
+        }
+        *{ box-sizing:border-box; }
+        body{
+          margin:0;
+          font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+          background:var(--bg);
+          color:var(--text);
+        }
+        .container{
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 32px 20px 60px;
+        }
+        .header{
+          display:flex;
+          align-items:flex-end;
+          justify-content:space-between;
+          gap:12px;
+          margin-bottom:18px;
+        }
+        h1{
+          margin:0;
+          font-size:42px;
+          letter-spacing:.2px;
+        }
+        .card{
+          background:var(--card);
+          border:1px solid var(--border);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          padding:16px;
+        }
+        .row{
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+          align-items:center;
+        }
+        .grow{ flex:1 1 260px; }
+        input[type="text"], select{
+          width:100%;
+          padding:10px 12px;
+          border:1px solid var(--border);
+          border-radius:12px;
+          background:#fff;
+          font-size:14px;
+        }
+        button{
+          border:1px solid var(--border);
+          background:#111827;
+          color:#fff;
+          padding:10px 12px;
+          border-radius:12px;
+          cursor:pointer;
+          font-weight:600;
+        }
+        button.secondary{
+          background:#fff;
+          color:#111827;
+        }
+        button.danger{
+          background:#ef4444;
+          border-color:#ef4444;
+        }
+        .tabs{
+          display:flex;
+          gap:10px;
+          margin:14px 0 6px;
+          flex-wrap:wrap;
+        }
+        .tab{
+          text-decoration:none;
+          color:#111827;
+          padding:8px 12px;
+          border:1px solid var(--border);
+          border-radius:999px;
+          background:#fff;
+          font-weight:600;
+          font-size:14px;
+        }
+        .meta{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:10px;
+          margin:14px 0;
+          color:var(--muted);
+          font-size:14px;
+        }
+        .pager a{
+          text-decoration:none;
+          color:#111827;
+          padding:8px 10px;
+          border:1px solid var(--border);
+          border-radius:12px;
+          background:#fff;
+          font-weight:600;
+          margin-left:8px;
+          display:inline-block;
+        }
+        ul{ list-style:none; padding:0; margin:0; }
+        .task{
+          display:flex;
+          align-items:flex-start;
+          justify-content:space-between;
+          gap:12px;
+          padding:14px 12px;
+          border-top:1px solid var(--border);
+          transition: all 0.2s ease;
+        }
+        .task:hover {
+          background: #eef2ff;
+          transform: translateY(-4px);
+          box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .task:first-child{ border-top:none; }
+        .task-left{ min-width:0; }
+        .title{
+          font-size:16px;
+          font-weight:700;
+          margin:0 0 6px;
+          overflow-wrap:anywhere;
+        }
+        .done{
+          text-decoration: line-through;
+          color:var(--muted);
+          font-weight:600;
+          opacity: 0.6;
+        }
+        .badge{
+          display:inline-flex;
+          align-items:center;
+          padding:4px 10px;
+          border-radius:999px;
+          font-size:12px;
+          font-weight:800;
+          border:1px solid var(--border);
+          background:#fff;
+          margin-left:8px;
+        }
+        .b-high{ border-color:#fecaca; background:#fff1f2; color:#b91c1c; }
+        .b-med{ border-color:#fed7aa; background:#fff7ed; color:#c2410c; }
+        .b-low{ border-color:#bbf7d0; background:#f0fdf4; color:#15803d; }
+
+        .actions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .inline{
+          display:flex;
+          gap:8px;
+        }
+        .inline input{ flex:1; }
+        .error{
+          color:#b91c1c;
+          font-size:13px;
+          margin-top:6px;
+        }
+        @media (max-width: 560px){
+          .actions{ min-width: 100%; }
+          .task{ flex-direction:column; }
+        }
+    </style>
 </head>
+
 <body>
-<h1>Task App</h1>
+<div class="container">
 
-<form method="get" action="/">
-    <input type="text" name="q" placeholder="検索キーワード">
-    <button type="submit">検索</button>
-</form>
+    <div class="header">
+        <h1>Task App</h1>
+    </div>
 
-<div>
-    <a th:href="@{/(page=0, size=${page.size})}">すべて</a>
+    <div class="card">
+        <!-- 検索 -->
+        <form method="get" action="/" class="row" style="margin-bottom:10px;">
+            <div class="grow">
+                <input type="text" name="q" placeholder="検索キーワード" th:value="${q}">
+            </div>
+            <button type="submit" class="secondary">検索</button>
+        </form>
 
-    <a th:href="@{/(filter=todo, page=0, size=${page.size})}">
-        未完了
-    </a>
+        <!-- フィルタ -->
+        <div class="tabs">
+            <a class="tab" th:href="@{/(page=0, size=${page.size}, q=${q})}">すべて</a>
+            <a class="tab" th:href="@{/(filter=todo, page=0, size=${page.size}, q=${q})}">未完了</a>
+            <a class="tab" th:href="@{/(filter=done, page=0, size=${page.size}, q=${q})}">完了</a>
+        </div>
 
-    <a th:href="@{/(filter=done, page=0, size=${page.size})}">
-        完了
-    </a>
+        <!-- 追加 -->
+        <form th:action="@{/tasks}" th:object="${taskForm}" method="post" class="row" style="margin-top:10px;">
+            <div class="grow">
+                <input type="text" th:field="*{title}" placeholder="新しいタスク" />
+                <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+            </div>
+
+            <div style="min-width:160px;">
+                <select th:field="*{priority}">
+                    <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}"></option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></div>
+            </div>
+
+            <button type="submit">追加</button>
+        </form>
+
+        <!-- ページ -->
+        <div class="meta">
+            <div><span th:text="${page.number + 1}"></span> / <span th:text="${page.totalPages}"></span></div>
+            <div class="pager">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/(page=${page.number-1}, size=${page.size}, filter=${filter}, q=${q})}">前へ</a>
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/(page=${page.number+1}, size=${page.size}, filter=${filter}, q=${q})}">次へ</a>
+            </div>
+        </div>
+
+        <!-- タスク一覧 -->
+        <ul>
+            <li class="task" th:each="t : ${tasks}">
+                <div class="task-left">
+                    <p class="title" th:classappend="${t.completed} ? ' done' : ''">
+                        <span th:text="${t.title}"></span>
+
+                        <span class="badge"
+                              th:text="${t.priority}"
+                              th:classappend="${t.priority.name() == 'HIGH'} ? ' b-high' :
+                    (${t.priority.name() == 'MEDIUM'} ? ' b-med' : ' b-low')">
+            </span>
+                    </p>
+                </div>
+
+                <div class="actions">
+                    <form th:action="@{/tasks/{id}/toggle(id=${t.id})}" method="post">
+                        <button type="submit" class="secondary"
+                                th:text="${t.completed} ? '未完了に戻す' : '完了'"></button>
+                    </form>
+
+                    <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post">
+                        <button type="submit" class="danger">削除</button>
+                    </form>
+
+                    <form th:action="@{/tasks/{id}/edit(id=${t.id})}" method="post" class="inline">
+                        <input name="title" th:value="${t.title}" />
+                        <button type="submit" class="secondary">名称変更</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+
 </div>
-
-<form th:action="@{/tasks}" th:object="${taskForm}" method="post">
-
-    <input type="text" th:field="*{title}" placeholder="新しいタスク" />
-    <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-
-    <select th:field="*{priority}">
-        <option th:each="p : ${priorities}"
-                th:value="${p}"
-                th:text="${p}">
-        </option>
-    </select>
-    <div th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></div>
-
-    <button type="submit">追加</button>
-
-    <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-</form>
-
-<div>
-    <span th:text="${page.number + 1}"></span> / <span th:text="${page.totalPages}"></span>
-
-    <a th:if="${page.hasPrevious()}"
-       th:href="@{/(page=${page.number-1}, size=${page.size}, filter=${filter}, q=${q})}">
-        前へ
-    </a>
-
-    <a th:if="${page.hasNext()}"
-       th:href="@{/(page=${page.number+1}, size=${page.size}, filter=${filter}, q=${q})}">
-        次へ
-    </a>
-</div>
-
-<ul>
-    <li th:each="t : ${tasks}">
-
-        <!-- タイトル -->
-        <span th:text="${t.title}"
-              th:style="${t.completed} ? 'text-decoration: line-through;' : ''">
-        </span>
-
-        <span th:text="${t.priority}"
-              th:style="${t.priority.name() == 'HIGH'} ? 'color:red;' :
-                (${t.priority.name() == 'MEDIUM'} ? 'color:orange;' : 'color:green;')">
-        </span>
-
-        <!-- 完了切り替え -->
-        <form th:action="@{/tasks/{id}/toggle(id=${t.id})}" method="post">
-            <button type="submit"
-                    th:text="${t.completed} ? '未完了に戻す' : '完了にする'">
-            </button>
-        </form>
-
-        <!-- 削除 -->
-        <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post">
-            <button type="submit">削除</button>
-        </form>
-
-        <form th:action="@{/tasks/{id}/edit(id=${t.id})}" method="post" style="display:inline;">
-            <input name="title" th:value="${t.title}" />
-            <button type="submit">変更</button>
-        </form>
-
-    </li>
-</ul>
-
 </body>
 </html>

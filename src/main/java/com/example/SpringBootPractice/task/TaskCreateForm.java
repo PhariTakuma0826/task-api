@@ -2,7 +2,6 @@ package com.example.SpringBootPractice.task;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import com.example.SpringBootPractice.task.Priority;
 import jakarta.validation.constraints.NotNull;
 
 public class TaskCreateForm {
@@ -13,8 +12,8 @@ public class TaskCreateForm {
 
     public String getTitle() {
         return title;
-
     }
+
     public void setTitle(String title) {
         this.title = title;
     }

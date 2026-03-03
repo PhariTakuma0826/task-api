@@ -8,63 +8,71 @@ import org.springframework.data.domain.Pageable;
 @Service
 public class TaskService {
 
-    private final TaskRepository repo;
+    private final TaskRepository trepo;
+    private final UserRepository urepo;
 
-    public TaskService(TaskRepository repo) {
-        this.repo = repo;
+    public TaskService(TaskRepository trepo, UserRepository urepo) {
+        this.trepo = trepo;
+        this.urepo = urepo;
     }
 
     public List<Task> findAll() {
-        return repo.findAll();
+        return trepo.findAll();
     }
 
     public Task create(String title, Priority priority) {
+
+        User user = urepo.findById(1L)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
         Task task = new Task(title, priority);
-        return repo.save(task);
+        task.setUser(user);
+
+        return trepo.save(task);
     }
 
     public Task update(long id, String title, Boolean completed) {
-        Task t = repo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        Task t = trepo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
         t.update(title, completed);
-        return repo.save(t);
+        return trepo.save(t);
     }
 
     public void delete(long id) {
-        repo.deleteById(id);
+        Task t = trepo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        trepo.delete(t);
     }
-
     public Task toggleCompleted(Long id) {
-        Task t = repo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        Task t = trepo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
         t.update(null, !t.isCompleted()); // 反転
-        return repo.save(t);
+        return trepo.save(t);
     }
 
     public Task updateTitle(long id, String title) {
-        Task t = repo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        Task t = trepo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
         t.updateTitle(title);   // ← 次でTaskに作る
-        return repo.save(t);    // 確実にDB反映（今はこれでOK）
+        return trepo.save(t);    // 確実にDB反映（今はこれでOK）
     }
 
     public Page<Task> findAll(Pageable pageable) {
-        return repo.findAllByOrderByPriorityRankDescCreatedAtDesc(pageable);
+        return trepo.findAllByOrderByPriorityRankDescCreatedAtDesc(pageable);
     }
 
     public Page<Task> findIncomplete(Pageable pageable) {
-        return repo.findByCompletedFalseOrderByPriorityRankDescCreatedAtDesc(pageable);
+        return trepo.findByCompletedFalseOrderByPriorityRankDescCreatedAtDesc(pageable);
     }
 
     public Page<Task> findComplete(Pageable pageable) {
-        return repo.findByCompletedTrueOrderByPriorityRankDescCreatedAtDesc(pageable);
+        return trepo.findByCompletedTrueOrderByPriorityRankDescCreatedAtDesc(pageable);
     }
 
     public Page<Task> search(String q, Pageable pageable) {
-        return repo.findByTitleContainingIgnoreCaseOrderByPriorityRankDescCreatedAtDesc(q, pageable);
+        return trepo.findByTitleContainingIgnoreCaseOrderByPriorityRankDescCreatedAtDesc(q, pageable);
     }
 
         public Task findById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        return trepo.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 }

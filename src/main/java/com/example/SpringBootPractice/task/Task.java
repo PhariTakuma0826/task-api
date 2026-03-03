@@ -100,4 +100,15 @@ public class Task {
         if (this.priority == null) this.priority = Priority.MEDIUM;
         this.priorityRank = this.priority.getRank();
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

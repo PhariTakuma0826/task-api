@@ -45,8 +45,9 @@ public class TaskPageController {
         model.addAttribute("q", q);
         model.addAttribute("priorities", Priority.values());
 
-        // もし追加フォーム使ってるなら
-        model.addAttribute("taskForm", new TaskCreateForm());
+        if (!model.containsAttribute("taskForm")) {
+            model.addAttribute("taskForm", new TaskCreateForm());
+        }
 
         return "index";
     }
